@@ -7,6 +7,7 @@ class Connection:
         self.addr = addr
         self.name = None
         self.active = True
+        
 
 
 class ChatServer:
@@ -16,7 +17,9 @@ class ChatServer:
         self.server_socket = socket(AF_INET, SOCK_STREAM)
         self.server_socket.bind(('127.0.0.1', self.port))
         self.server_socket.listen()
+        self.log_file = open("message.log", "a")
         print("Server started on", self.port)
+
 
     def start(self):
         while True:
@@ -44,6 +47,9 @@ class ChatServer:
             if message == 'EXIT':
                 message = "I'm leaving, bye!"
             # store in log file
+            csv_line = client.name + "," + message + "\n"
+            self.log_file.write(csv_line)
+            self.log_file.flush()
             self.broadcast(message, client.name)
             client.active = False
             return
